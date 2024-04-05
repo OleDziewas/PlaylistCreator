@@ -18,7 +18,6 @@ const getAuthToken = async function(code: string, cookies: Cookies) {
     
     const body = await fetch('https://accounts.spotify.com/api/token', payload);
     const response =await body.json();
-    console.log(response);
     return response;
 }
 
