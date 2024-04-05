@@ -14,5 +14,9 @@
     <Header authToken={data?.authToken}></Header>
     <PlaylistInput></PlaylistInput>
     <Playlist playlist={form}></Playlist>
+    <form hidden={!form} method="POST" action="?/playlistToSpotify">
+        <input name="playlist" hidden value={form}>
+        <button type="submit">Transfer Playlist to Spotify</button>
+    </form>
 {/if}
 

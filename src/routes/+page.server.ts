@@ -1,5 +1,5 @@
 import { CLIENT_ID } from '$env/static/private';
-import { setState } from '$lib/sharedState.js';
+import { getPlaylist, setPlaylist, setState } from '$lib/sharedState.js';
 import { redirect } from '@sveltejs/kit';
 
 export function load({cookies}){
@@ -87,11 +87,38 @@ export const actions = {
             };
         }
 
-        //Songs: Titel (tracks.items.name), Artist (tracks.items.artists[].name), Cover, Dauer, ID
-        return {
+        let playlist = {
             "title" : title,
             "len" : len,
             "songs": songs
-        };
+        }
+        //Songs: Titel (tracks.items.name), Artist (tracks.items.artists[].name), Cover, Dauer, ID
+        setPlaylist(playlist);
+        return playlist;
+
+    },
+
+    playlistToSpotify: async ({cookies}) => {
+        let authToken = cookies.get("authToken");
+        let playlist = getPlaylist();
+        const res = await fetch("https://api.spotify.com/v1/me", {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${authToken}`
+            },
+        });
+        const profile = await res.json();
+        let user_id = profile.id;
+        console.log(playlist.title);
+        const playlist_res = await fetch(`https://api.spotify.com/v1/users/${user_id}/playlists`, {
+            method: "POST",
+            headers: {
+                "Content-Type":"application/json",
+                Authorization: `Bearer ${authToken}`
+            },
+            body: JSON.stringify({
+                name: playlist.title,
+            })
+        });
     }
 };
