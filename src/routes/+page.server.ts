@@ -60,8 +60,16 @@ export const actions = {
     createPlaylist: async ({ request, cookies }) => {
         const authToken = cookies.get("authToken");
         let params = await request.formData();
-        let len = params.get("playlistLength");
+        let len = Number(params.get("playlistLength"));
         let title = params.get("playlistName");
+
+        if (title === "" || title === undefined){
+            return { "error": "Empty Title is not allowed."}
+        }
+
+        if (len <= 0 || len > 50) {
+            return { "error": "Number of songs has to be between 1 and 50."}
+        } 
         // Get random songs
         const search = await getRandomSongs(authToken);
         let items = search.tracks.items;
@@ -110,6 +118,7 @@ export const actions = {
         const profile = await res.json();
         let user_id = profile.id;
         console.log(playlist.title);
+        // Create Playlist
         const playlist_res = await fetch(`https://api.spotify.com/v1/users/${user_id}/playlists`, {
             method: "POST",
             headers: {
@@ -118,6 +127,27 @@ export const actions = {
             },
             body: JSON.stringify({
                 name: playlist.title,
+            })
+        });
+        const playlist_json = await playlist_res.json();
+        const playlist_id = playlist_json.id;
+
+        
+        // Add Songs to playlist
+        const songs = playlist.songs;
+        let songIDs = []
+        for (let i = 0; i < songs.length; i++){
+            songIDs.push("spotify:track:"+songs[i].id);
+        }
+        
+        const addSongsRes = await fetch(`https://api.spotify.com/v1/playlists/${playlist_id}/tracks`, {
+            method: "POST",
+            headers: {
+                "Content-Type":"application/json",
+                Authorization: `Bearer ${authToken}`
+            },
+            body: JSON.stringify({
+                uris: songIDs
             })
         });
     }
