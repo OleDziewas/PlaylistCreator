@@ -15,17 +15,18 @@ const generateRandomString = (length: number) => {
     return values.reduce((acc, x) => acc + possible[x % possible.length], "");
 }
 
-const getRandomSongs = async function(authToken: string | undefined, popularity: FormDataEntryValue | null){
+const getRandomSongs = async function(authToken: string | undefined, popularity: FormDataEntryValue | null, genres: string[]){
     // API request mit Parametern machen und Liste erstellen
     let possible = 'abcdefghijklmnopqrstuvwxyz';
     let possible_songs: any[] = [];
     let q = "A";
     let list_of_qs: string[] = [];
-    let limit = 25;
-    let searchRounds = 10;
-    let offset = 0;
-    //Value between 1 and 100
+    let limit = 15;
+    let searchRounds = 15;
+    let offset = 100-Number(popularity);
+
     for (let i = 0; i < searchRounds; i++){
+        // Select random letter or number to search
         if (i === searchRounds-1){
             possible = '123456789';
         }
@@ -34,9 +35,15 @@ const getRandomSongs = async function(authToken: string | undefined, popularity:
             q = possible[Math.floor(Math.random()*possible.length)];
         }
         list_of_qs.push(q);
-        offset = Math.floor(Math.random()*(800/Number(popularity))) + (100-Number(popularity));
-        console.log(q);
-        const res = await fetch(`https://api.spotify.com/v1/search?q=${q}&type=track&market=DE&limit=${limit}&offset=${offset}`, {
+        // Select Genres to search for
+        let selected_genre;
+        if (genres.length === 0){
+            selected_genre = "";
+        } else{
+            selected_genre = "+genre:"+ genres[Math.floor(Math.random()*genres.length)];
+        }
+        console.log(selected_genre);
+        const res = await fetch(`https://api.spotify.com/v1/search?q=${q}${selected_genre}&type=track&market=DE&limit=${limit}&offset=${offset}`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${authToken}`
@@ -52,18 +59,22 @@ const getRandomSongs = async function(authToken: string | undefined, popularity:
 const filterItems = function(items: any, filter: FormData){
     //TODO: Filter items
     let playlistLength = filter.get("playlistLength");
-    let limit = 25;
-    let res = [];
-    let list_of_indeces: number[] = [];
+    let res: any[] = [];
+    let songs_ids: any[] = [];
     for (let i = 0; i < Number(playlistLength); i++){
-        let index = Math.floor(((i*limit)+(Math.random()*limit))%250);
-        while (list_of_indeces.includes(index)){
-            index = Math.floor(((i*limit)+(Math.random()*limit))%250);
+        let index = Math.floor(Math.random()*items.length);
+        let max_tries = 100;
+        while (songs_ids.includes(items[index].id) && max_tries != 0){
+            index = Math.floor(Math.random()*items.length);
+            max_tries--;
         }
-        list_of_indeces.push(index);
-        console.log(index);
+        if (max_tries === 0){
+            console.log("Could not find a new song");
+        }
+        songs_ids.push(items[index].id);
         res.push(items[index]);
     }
+
     return res;
 }
 
@@ -94,7 +105,16 @@ export const actions = {
         let len = Number(params.get("playlistLength"));
         let title = params.get("playlistName");
         let popularity = params.get("popularity");
-
+        const genres = [ 'Pop', 'Singer-Songwriter', 'Rap', 'Electronic', 'Blues', 'Jazz', 'Soul',  'Rock', 'Metal', 'Punk', 'Country',  'Folk'];
+        // Get selected genres
+        let selected_genre: string[] = []
+        for (let i = 0; i< genres.length; i++){
+            if (params.get(genres[i]) === 'on'){
+                selected_genre.push(genres[i]);
+            }
+            
+        }
+        // Check for correct input values
         if (title === "" || title === undefined){
             return { "error": "Empty Title is not allowed."}
         }
@@ -103,7 +123,7 @@ export const actions = {
             return { "error": "Number of songs has to be between 1 and 50."}
         } 
         // Get random songs
-        let items = await getRandomSongs(authToken, popularity);
+        let items = await getRandomSongs(authToken, popularity, selected_genre);
         // Filter the songs with given attributes
         items = filterItems(items, params);
 

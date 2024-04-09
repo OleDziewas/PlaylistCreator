@@ -46,7 +46,7 @@ export async function load({cookies, url})  {
     const response = await getAuthToken(code, cookies);
     cookies.set('authToken', response.access_token, {
         path: '/',
-        maxAge: response.expires_in,
+        maxAge: response.expires_in-200,
         httpOnly: true,
 	    secure: true,
 	    sameSite: 'lax'
