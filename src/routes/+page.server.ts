@@ -15,25 +15,56 @@ const generateRandomString = (length: number) => {
     return values.reduce((acc, x) => acc + possible[x % possible.length], "");
 }
 
-const getRandomSongs = async function(authToken: string | undefined){
+const getRandomSongs = async function(authToken: string | undefined, popularity: FormDataEntryValue | null){
     // API request mit Parametern machen und Liste erstellen
-    let q = "B";
-    let limit = 50;
+    let possible = 'abcdefghijklmnopqrstuvwxyz';
+    let possible_songs: any[] = [];
+    let q = "A";
+    let list_of_qs: string[] = [];
+    let limit = 25;
+    let searchRounds = 10;
     let offset = 0;
-    const res = await fetch(`https://api.spotify.com/v1/search?q=${q}&type=track&market=DE&limit=${limit}&offset=${offset}`, {
-        method: "GET",
-        headers: {
-            Authorization: `Bearer ${authToken}`
-        },
-    });
-    const search = await res.json();
-    return search;
+    //Value between 1 and 100
+    for (let i = 0; i < searchRounds; i++){
+        if (i === searchRounds-1){
+            possible = '123456789';
+        }
+        q = possible[Math.floor(Math.random()*possible.length)];
+        while (list_of_qs.includes(q)){
+            q = possible[Math.floor(Math.random()*possible.length)];
+        }
+        list_of_qs.push(q);
+        offset = Math.floor(Math.random()*(800/Number(popularity))) + (100-Number(popularity));
+        console.log(q);
+        const res = await fetch(`https://api.spotify.com/v1/search?q=${q}&type=track&market=DE&limit=${limit}&offset=${offset}`, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${authToken}`
+            },
+        });
+        const search = await res.json();
+        possible_songs = possible_songs.concat(search.tracks.items);
+    }
+    
+    return possible_songs;
 }
 
 const filterItems = function(items: any, filter: FormData){
     //TODO: Filter items
     let playlistLength = filter.get("playlistLength");
-    return items.slice(0, playlistLength);
+    let limit = 25;
+    let res = [];
+    let list_of_indeces: number[] = [];
+    for (let i = 0; i < Number(playlistLength); i++){
+        let index = Math.floor(((i*limit)+(Math.random()*limit))%250);
+        while (list_of_indeces.includes(index)){
+            index = Math.floor(((i*limit)+(Math.random()*limit))%250);
+        }
+        list_of_indeces.push(index);
+        console.log(index);
+        res.push(items[index]);
+    }
+    return res;
 }
 
 export const actions = {
@@ -62,6 +93,7 @@ export const actions = {
         let params = await request.formData();
         let len = Number(params.get("playlistLength"));
         let title = params.get("playlistName");
+        let popularity = params.get("popularity");
 
         if (title === "" || title === undefined){
             return { "error": "Empty Title is not allowed."}
@@ -71,9 +103,7 @@ export const actions = {
             return { "error": "Number of songs has to be between 1 and 50."}
         } 
         // Get random songs
-        const search = await getRandomSongs(authToken);
-        let items = search.tracks.items;
-
+        let items = await getRandomSongs(authToken, popularity);
         // Filter the songs with given attributes
         items = filterItems(items, params);
 
