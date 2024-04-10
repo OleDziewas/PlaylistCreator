@@ -14,4 +14,6 @@
 	});
 </script>
 
-<h1>{username}</h1>
+<div class="container m-auto flex flex-row justify-end items-center bg-gradient-to-r from-emerald-600 to-sky-400 w-screen">
+    <h1 class="p-8 font-semibold text-lg">{username}</h1>
+</div>
