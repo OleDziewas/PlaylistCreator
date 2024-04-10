@@ -3,9 +3,13 @@
     import { enhance } from '$app/forms';
     import { browser } from "$app/environment";
 	import { afterUpdate } from "svelte";
+
+    export let authToken: string | undefined;
+
     let playlistName = "Playlist"
     let playlistLength = 10;
     let popularity = 100;
+    
     const genres = [ 'Pop', 'Singer-Songwriter', 'Rap', 'Electronic', 'Blues', 'Jazz', 'Soul',  'Rock', 'Metal', 'Punk', 'Country',  'Folk'];
     function setTransferFalse(){
         successfullTransfer.set(false);
@@ -13,7 +17,7 @@
 
 </script>
 
-<div class="container mx-auto shadow-2xl rounded-3xl">
+<div class="w-screem mx-auto">
     <form id="playlistAttributes" method="POST" action="?/createPlaylist" use:enhance={() => {
         creating.set(true);
         return async ({ update }) => {
@@ -46,8 +50,16 @@
                 {/each}
             </div>
         </div>
-        <div class="container md:w-1/3 w-full flex flex-row items-center justify-center">
-            <button class="m-6 bg-green-600 hover:bg-gray-100 text-white font-bold py-2 px-4 border border-gray-400 rounded shadow" on:click={setTransferFalse} type="submit">Create Playlist</button>
-        </div>
+        {#if authToken}
+            <div class="container md:w-1/3 w-full flex flex-row items-center justify-center">
+                <button class="m-6 text-xl bg-green-600 hover:bg-gray-100 text-white font-bold py-2 px-4  rounded-3xl shadow" on:click={setTransferFalse} type="submit">Create Playlist</button>
+            </div>
+        {:else}
+            <div class="container md:w-1/3 w-full flex flex-row items-center justify-center">
+                <form method="POST" action="?/login">
+                    <button class="m-6 text-xl bg-green-600 hover:bg-gray-100 text-white font-bold py-2 px-4  rounded-3xl shadow" type="submit">Create Playlist</button>
+                </form>
+            </div>
+        {/if}
     </form>
 </div>

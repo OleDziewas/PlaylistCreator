@@ -42,7 +42,6 @@ const getRandomSongs = async function(authToken: string | undefined, popularity:
         } else{
             selected_genre = "+genre:"+ genres[Math.floor(Math.random()*genres.length)];
         }
-        console.log(selected_genre);
         const res = await fetch(`https://api.spotify.com/v1/search?q=${q}${selected_genre}&type=track&market=DE&limit=${limit}&offset=${offset}`, {
             method: "GET",
             headers: {
