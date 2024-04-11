@@ -7,7 +7,7 @@
     }
 </script>
 
-<div class="border-4 border px-12 mb-4 rounded-3xl container flex flex-row items-center justify-between w-3/4 mx-auto">
+<div class="border-4 px-12 mb-4 rounded-3xl container flex flex-row items-center justify-between w-3/4 mx-auto">
     <div class="py-2">
         <p class="text-gray-700 text-xl font-bold mb-2">{song.songName}</p>
         <p>Artists: {song.artists.join(', ')}</p>
