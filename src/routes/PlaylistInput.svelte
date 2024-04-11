@@ -43,8 +43,8 @@
                 </div>
                 <br>
             </div>
-            <div class="grid grid-cols-4 gap-4 md:w-1/2 w-full">
-                <h3 class="block text-gray-700 text-xl font-bold mb-2 col-span-4">Genre:</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 md:gap-4 md:w-1/2 w-5/">
+                <h3 class="block text-gray-700 text-xl font-bold mb-2 col-span-2 md:col-span-4">Genre:</h3>
                 {#each genres as genre}
                     <div class="col-span-1 m-2 flex flex-row justify-start items-center">
                         <input class="before:content[''] peer relative h-8 w-8 cursor-pointer appearance-none rounded-full border border-gray-900/20 bg-gray-900/10 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-gray-900 checked:bg-green-500 checked:before:bg-gray-900 hover:scale-105 hover:before:opacity-0" id={genre} type="checkbox" name={genre}>

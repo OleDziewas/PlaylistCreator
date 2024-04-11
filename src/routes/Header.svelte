@@ -17,7 +17,7 @@
 </script>
 
 
-<div class="w-screen m-auto flex md:flex-row flex-col justify-between items-center bg-gradient-to-r from-emerald-600 to-sky-400">
+<div class="w-screen m-auto flex md:flex-row flex-col justify-between items-center bg-gradient-to-r from-emerald-600 to-sky-400 px-12">
     <h1 class="text-5xl text-white font-bold m-5 drop-shadow-[0_5.0px_5.0px_rgba(0,0,0,1)]">PlaylistCreator</h1>
     {#if !authToken}
         <form method="POST" action="?/login">
