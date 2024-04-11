@@ -62,16 +62,9 @@
                 {/each}
             </div>
         </div>
-        {#if authToken}
-            <div class="container md:w-1/3 w-full flex flex-row items-center justify-center">
-                <button class="m-6 text-xl bg-green-600 hover:bg-gray-100 text-white font-bold py-2 px-4  rounded-3xl shadow" on:click={setTransferFalse} type="submit">Create Playlist</button>
-            </div>
-        {:else}
-            <div class="container md:w-1/3 w-full flex flex-row items-center justify-center">
-                <form method="POST" action="?/login">
-                    <button class="m-6 text-xl bg-green-600 hover:bg-green-300 text-white font-bold py-2 px-4  rounded-3xl shadow" type="submit">Create Playlist</button>
-                </form>
-            </div>
-        {/if}
+
+        <div class="container md:w-1/3 w-full flex flex-row items-center justify-center">
+            <button class="m-6 text-xl bg-green-600 hover:bg-gray-100 text-white font-bold py-2 px-4  rounded-3xl shadow" on:click={setTransferFalse} type="submit">Create Playlist</button>
+        </div>
     </form>
 </div>

@@ -82,7 +82,7 @@ export const actions = {
 		await request.formData();
         // Make Spotify Call
 		const client_id = CLIENT_ID;
-        const redirect_uri = 'https://main--jazzy-klepon-c958f7.netlify.app/callback';
+        const redirect_uri = 'http://localhost:5173/callback';
         const state = generateRandomString(16);
         setState(state);
         const scope = 'playlist-read-private playlist-modify-private playlist-modify-public';
@@ -100,6 +100,10 @@ export const actions = {
 
     createPlaylist: async ({ request, cookies }) => {
         const authToken = cookies.get("authToken");
+        if (!authToken) {
+            return { "error": "You have to login first."};
+        }
+
         let params = await request.formData();
         let len = Number(params.get("playlistLength"));
         let title = params.get("playlistName");
