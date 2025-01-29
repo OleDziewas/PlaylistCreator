@@ -12,7 +12,7 @@ const getAuthToken = async function(code: string, cookies: Cookies) {
         body: new URLSearchParams({
           grant_type: 'authorization_code',
           code: code,
-          redirect_uri: 'https://main--jazzy-klepon-c958f7.netlify.app/callback'
+          redirect_uri: 'https://creatorforspotifyplaylist.netlify.app/callback'
         }),
       }
     

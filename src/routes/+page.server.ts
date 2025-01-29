@@ -82,7 +82,7 @@ export const actions = {
 		await request.formData();
         // Make Spotify Call
 		const client_id = CLIENT_ID;
-        const redirect_uri = 'https://main--jazzy-klepon-c958f7.netlify.app/callback';
+        const redirect_uri = 'https://creatorforspotifyplaylist.netlify.app/callback';
         const state = generateRandomString(16);
         setState(state);
         const scope = 'playlist-read-private playlist-modify-private playlist-modify-public';
